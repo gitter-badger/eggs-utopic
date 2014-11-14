@@ -3,7 +3,7 @@ eggs-utopic
 
 
 ![eggs-utopic](https://github.com/pieroproietti/eggs-utopic/blob/master/opt/eggs/eggs.png?raw=true)
-eggs, un sistema di riproduzione eccellente per pinguini ma che aiuta - non 
+, un sistema di riproduzione eccellente per pinguini ma che aiuta - non 
 poco - anche nella sistemazione delle finestre!
 
 Tutto quello che serve per trasformare il vostro ubuntu/lubuntu/kubuntu 

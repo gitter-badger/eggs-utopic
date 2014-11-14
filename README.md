@@ -2,7 +2,7 @@ eggs-utopic
 ===========
 
 
-![eggs-utopic](https://github.com/pieroproietti/eggs-utopic/master/usr/share/icons/eggs.png?raw=true)
+![eggs-utopic](https://github.com/pieroproietti/eggs-utopic/blob/master/opt/eggs/eggs.png?raw=true)
 
 
 Un sistema di riproduzione eccellente per pinguini ma che aiuta - non 

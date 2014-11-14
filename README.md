@@ -3,27 +3,41 @@ eggs-utopic
 
 
 ![eggs-utopic](https://github.com/pieroproietti/eggs-utopic/blob/master/opt/eggs/eggs.png?raw=true)
-Modifica
+eggs, un sistema di riproduzione eccellente per pinguini ma che aiuta - non 
+poco - anche nella sistemazione delle finestre!
 
-Un sistema di riproduzione eccellente per pinguini ma che aiuta - non 
-poco - nella sistemazione delle finestre!
-
-Tutto quello che serve per trasformare il tuo ubuntu/lubuntu/kubuntu 
-14.10 in un boot server di se stesso!
+Tutto quello che serve per trasformare il vostro ubuntu/lubuntu/kubuntu 
+14.10 in un boot server di se stesso.
 
 Con eggs trasformerete la vostra macchina in un boot server e 
 potrete avviare qualsiasi computer in rete locale con le vostre 
 impostazioni per la manutenzione, il recupero dati, la clonazione ed
 il restore delle vostre immagini di sistema.
 
-Per il funzionamento di eggs-utopic è necessaria l'installazione del
-pacchetto yad, occorre quindi abilitare la repository ppa:webupd8team/y-ppa-manager
+Istruzioni
+==========
+Scaricate ed installate una versione di Ubuntu, Kubuntu o Lubuntu
+sulla macchina che sarà il vostro boot server. 
+
+Una volta completata l'installazione, procedete ad abilitare la 
+repository ppa:webupd8team/y-ppa-manager, necessaria per yad 
+YAD (Yet Another Dialog) è un fork di zenity con molte migliorie -
 procedendo come segue:
 - sudo add-apt-repository ppa:webupd8team/y-ppa-manager
 - sudo apt-get update
 - sudo apt-get install yad
 
-YAD (Yet Another Dialog) è un fork di zenity con molte migliorie.
+Scaricate eggs-utopic.deb
+
+sudo dpkg -i eggs-utopic
+
+correggete le dipendenze:
+sudo apt-get install -f
+
+avviate eggs
+sudo /opt/eggs/eggs
+
+procedete secondo le istruzioni.
 
 Una nota sui nomi
 =================

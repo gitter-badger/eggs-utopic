@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Clonezilla
+GenericName=Clonezilla
+Comment=Clona i tuoi sistemi
+Exec=gksudo "lxterminal -e clonezilla"
+Icon=/usr/share/icons/ocslogo.png
+Terminal=false
+Type=Application
+Categories=System;Settings;
+StartupNotify=true

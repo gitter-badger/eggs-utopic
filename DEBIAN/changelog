@@ -1,0 +1,6 @@
+giantturtle_0.7.2-6_all.deb
+Inserita creazione link in ${XDG_DESKTOP_DIR:-$HOME/Desktop}
+Inserita copia wallpaper in $XDG_DATA_DIRS/wallpaper
+giantturtle_0.7.2-7_all.deb
+-corretta la creazione dei link in /etc/skel
+-corretto eggs-renew da pxelinux.0 a lpxelinux.0

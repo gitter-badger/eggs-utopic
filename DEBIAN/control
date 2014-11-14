@@ -1,0 +1,13 @@
+Package: giantturtle-utopic
+Version: 0.7.2-8
+Architecture: all
+Maintainer: Piero Proietti [piero.proietti@gmail.com]
+Depends: yad, perl, ash, ipcalc, sshfs, wakeonlan, syslinux, pxelinux
+Section: admin
+Priority: extra
+Homepage: http://piojoris15.com/
+Description: GiantTurtle installa un boot server ed avvia la distro 
+ little-bird o le immagini iso (NON INCLUSE)
+ .
+ GiantTurtle, creato da Piero Proietti piero.proietti@gmail.com
+              https://github.com/pieroproietti/giantturtle-utopic/

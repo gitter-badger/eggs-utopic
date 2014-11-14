@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Eggs--renew
+GenericName=Rinnova l'uovo
+Comment=Rinnova gli indirizzi del boot server
+Exec=gksudo "lxterminal -e /opt/eggs/eggs-renew"
+Icon=/usr/share/icons/eggs.png
+Terminal=false
+Type=Application
+Categories=System;Settings;
+StartupNotify=true

@@ -1,0 +1,14 @@
+#!/bin/sh
+echo Creazione ed installazione di ipxelinux.0
+rm /var/lib/tftpboot/ipxelinux.0
+apt-get install build-essential binutils perl git nasm -y
+git clone git://git.ipxe.org/ipxe.git
+cd ipxe
+echo "#!ipxe" >ipxelinux.ipxe
+echo "dhcp" >>ipxelinux.ipxe
+echo "chain pxelinux.0" >>ipxelinux.ipxe
+cd src
+make bin/undionly.kkkpxe EMBED=../ipxelinux.ipxe,/var/lib/tftpboot/pxelinux.0 
+install -v -m 0644 -g root -o root bin/undionly.kkkpxe /var/lib/tftpboot/ipxelinux.0
+chmod 777 /var/lib/tftpboot/ipxelinux.0
+cd ..

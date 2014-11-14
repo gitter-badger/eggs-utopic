@@ -1,0 +1,12 @@
+
+[Desktop Entry]
+Encoding=UTF-8
+Name=Penguin's eggs Install
+GenericName=Eggs, un pinguino che fa le uova...
+Comment=Crea un boot server sulla tua rete locale
+Exec=gksudo "lxterminal -e /opt/eggs/eggs"
+Icon=/usr/share/icons/eggs.png
+Terminal=false
+Type=Application
+Categories=System;Settings;
+StartupNotify=true

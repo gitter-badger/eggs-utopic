@@ -1,0 +1,818 @@
+#!/bin/bash
+######################################################################################
+# Eggs: the right contribute to Penguin's diffusion!
+#       by Piero Proietti
+#
+# It was initially based on :
+# - https://help.ubuntu.com/community/DisklessUbuntuHowto.
+# - git://gist.github.com/622495.git by joakimk
+# - http://remastersys.com (remastersys-backup) by Fragadelic
+#
+# Author: Proietti Piero email: piero.proietti@gmail.com
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#  
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#  
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+#  MA 02110-1301, USA.
+#  
+#
+######################################################################################
+
+###########
+# Funzioni
+###########
+
+#
+# progressBar
+#
+progressBar() {
+    tail -f /opt/eggs/eggs|yad \
+	--window-icon=/usr/share/icons/artisan-lab/artisan-lab.png \
+	--image=/usr/share/icons/artisan-lab/artisan-lab-eggs.png \
+	--center \
+    --always-print-result \
+    --dialog-sep \
+	--title="Penguin's Eggs" \
+    --progress \
+    --pulsate \
+    --auto-close \
+    --text "$@"
+}
+
+#
+# progressBarKill
+#
+progressBarKill() {
+	sleep 1
+    killall -KILL tail
+}
+
+#
+# yesNoBox()
+#
+yesNoBox()
+{
+	yad \
+	--window-icon=/usr/share/icons/artisan-lab/artisan-lab.png \
+	--image=/usr/share/icons/artisan-lab/artisan-lab-eggs.png \
+	--title="Penguin's Eggs" \
+	--center \
+	--button=gtk-yes:0 \
+	--button=gtk-no:1 \
+    --text "$@"
+}
+
+#
+# messageKind()
+#
+messageKind()
+{
+	yad --window-icon=/usr/share/icons/artisan-lab/artisan-lab.png \
+		--image=/usr/share/icons/artisan-lab/artisan-lab-eggs.png \
+		--title="Penguin's Eggs" \
+		--center \
+		--button=gtk-ok:0 \
+		--text "$@"
+}
+
+
+###########
+# Fine Funzioni
+###########
+
+
+###
+# bootServerInstall
+######################################################################################
+bootServerInstall()
+{
+	progressBar "Installazione e configurazione boot server,,,\n" &
+	apt-get install syslinux dnsmasq nfs-kernel-server apache2 -y
+	#initramfs-tools
+	progressBarKill
+
+}
+
+###
+# Remove
+######################################################################################
+bootServerRemove()
+{
+	progressBar "Rimozione completa dei componenti server" 
+	apt-get remove --purge syslinux dnsmasq nfs-kernel-server apache2 -y
+	progressBarKill
+
+	cprogressBar "Rimozione incubatore..." &
+	rm /var/www -rf
+	
+	cprogressBar "Rimozione dell\'uovo... " &
+	rm /srv/eggs -r 
+	
+	progressBarKill
+}
+
+
+###
+# eggNfsPrepare
+######################################################################################
+eggNfsPrepare()
+{
+	while [ "$PASSOK" != "Yes" ]
+	do
+
+		CHOICES=$(yad --window-icon=/usr/share/icons/artisan-lab/artisan-lab.png \
+			--image=/usr/share/icons/artisan-lab/artisan-lab-eggs.png \
+			--title="Penguin's Eggs" \
+			--always-print-result \
+			--dialog-sep \
+			--width=600 --height=300 --center\
+			--text="
+Iniziamo con il processo di fecondazione. La successiva deposizione 
+dell\'uovo e la cova saranno avviati in via \"naturale\", ma potete 
+interrompere il processo a questo punto.\n" \
+			--form \
+			--field="Nome utente completo" \
+			--field="Nome utente" \
+			--field="Nome host" \
+			--field="Password utente":H \
+			--field="Conferma la password dell\'utente":H \
+			--field="Indirizzo IP o FQDN server (10.26.106.100)" \
+			--field="Account nel server (root)" \
+			--field="Directory per le immagini Clonezilla (\/var\/lib\/vz\/hell) " \
+			--field="Password per server ssh":H)
+
+		if [ "$?" = "0" ]
+		then
+			CLIENT_USERFULLNAME=$(echo $CHOICES | cut -d "|" -f 1)
+			CLIENT_USERNAME=$(echo $CHOICES | cut -d "|" -f 2)
+			CLIENT_HOSTNAME=$(echo $CHOICES | cut -d "|" -f 3)
+			CLIENT_PASSWORD=$(echo $CHOICES | cut -d "|" -f 4)
+			CLIENT_PASSWORD2=$(echo $CHOICES | cut -d "|" -f 5)
+			SSH_IP=$(echo $CHOICES | cut -d "|" -f 6)
+			SSH_USER=$(echo $CHOICES | cut -d "|" -f 7)
+			SSH_PATH=$(echo $CHOICES | cut -d "|" -f 8)
+			SSH_PASSWORD=$(echo $CHOICES | cut -d "|" -f 9)
+
+			echo "---------------------------------------------------"
+			echo $CHOICES
+			echo "SSH_IP=" $SSH_IP
+			echo "SSH_USER=" $SSH_USER
+			echo "SSH_PATH=" $SSH_PATH
+			echo "SSH_PASSWORD=" $SSH_PASSWORD
+			echo "---------------------------------------------------"
+			
+			
+		else 
+			messageKind "La procedura verrà terminata"
+		  	exit 1
+		fi
+
+		[ "$CLIENT_PASSWORD" != "" ] && \
+		[ "$CLIENT_USERNAME" != "" ] && \
+		[ "$CLIENT_HOSTNAME" != "" ] && \
+		[ "$CLIENT_DOMAINNAME" != "" ] && \
+		[ "$CLIENT_PASSWORD" = "$CLIENT_PASSWORD2" ]
+
+		PASSOK="Yes"
+
+		ERROR_GIVE="yad --window-icon=/usr/share/icons/artisan-lab/artisan-lab.png \
+			--image=/usr/share/icons/artisan-lab/artisan-lab-installer.png \
+			--title="Penguin\'s Eggs" \
+			--always-print-result \
+			--dialog-sep \
+			--width=600 --height=300 --center \ 
+			--button=gtk-ok:0 \
+			--text="
+		[ "$CLIENT_PASSWORD" = "" ] && 					 $ERROR_GIVE"La password di root non può essere blank."
+		[ "$CLIENT_PASSWORD" != "$CLIENT_PASSWORD2" ] && $ERROR_GIVE"La password non corrisponde."
+		[ "$CLIENT_HOSTNAME" = "" ] && 					 $ERROR_GIVE"Deve essere inserito il dell\'nome host."
+		[ "$CLIENT_DOMAINNAME" = "" ] && $ERROR_GIVE"Deve essere inserito il nome del dominio."
+	done
+
+	#
+	# Rimuove tutto ed aggiorna...
+	#
+
+	progressBar "
+Fedare
+
+Prima di riprodursi, un sistema responsabile, si aggiorna..." &
+
+	apt-get autoremove -y
+	apt-get update -y
+	apt-get install sshpass -y
+	apt-get upgrade -y
+	progressBarKill
+
+	# copio le icone
+	cp /opt/eggs/ocslogo.png /usr/share/icons/
+	cp /opt/eggs/eggs.png /usr/share/icons/
+	
+	# copio i link alle applicazioni in applications
+	cp /opt/eggs/clonezilla.desktop /usr/share/applications/
+	cp /opt/eggs/eggs.desktop /usr/share/applications/
+	
+	# copio i link alle applicazioni nello skel
+	cp /opt/eggs/clonezilla.desktop /etc/skel/
+	#cp /opt/eggs/eggs.desktop /etc/skel/Desktop/
+
+	progressBar "Fedare\n\nAdesso iniziano le operazioni di riproduzione..." &
+	mkdir /srv/eggs
+	mkdir /srv/eggs/littlebird
+	progressBarKill
+
+	#
+	# Copia del sistema...
+	#
+	progressBar "Fedare\n\nCopia dei file nel sistema di destinazione...\n\nQuesta procedura può impiegare molto tempo.\nAttendere prego." &
+	echo "###Copia dei file nel sistema di destinazione###"
+    rsync -a / /srv/eggs/littlebird/ --ignore-existing --exclude=/{srv/eggs,home,live,cdrom,mnt,proc,run,sys,media}
+    mkdir -p /srv/eggs/littlebird/{proc,mnt,run,sys,media/cdrom,home}
+	progressBarKill
+
+
+
+	progressBar "Fedare\n\nCreazione di interfaces, resolv.conf, fstab... " &
+
+	# Configuro fstab
+	rm -rf /srv/eggs/littlebird/etc/fstab
+
+	echo "### Creazione fstab  ###"
+	echo "# Generated by eggs " > /srv/eggs/littlebird/etc/fstab
+	echo "proc /proc proc defaults 0 0" >> /srv/eggs/littlebird/etc/fstab
+	echo "/dev/nfs / nfs defaults 1 1" >> /srv/eggs/littlebird/etc/fstab
+	echo "# sintassi: sshfs#root@10.26.106.100:/var/lib/vz/hell /home/partimag fuse defaults 0 0" >> /srv/eggs/littlebird/etc/fstab	
+	echo "#sshfs#$SSH_USER@$SSH_IP:$SSH_PATH /home/partimag fuse defaults 0 0" >> /srv/eggs/littlebird/etc/fstab
+	echo "none /tmp tmpfs defaults 0 0" >> /srv/eggs/littlebird/etc/fstab
+	echo "none /var/run tmpfs defaults 0 0" >> /srv/eggs/littlebird/etc/fstab
+	echo "none /var/lock tmpfs defaults 0 0" >> /srv/eggs/littlebird/etc/fstab
+	echo "none /var/tmp tmpfs defaults 0 0" >> /srv/eggs/littlebird/etc/fstab
+	
+	#lxdm section
+	if [ -f /srv/eggs/littlebird/etc/lxdm/lxdm.conf ]
+	then
+		sed -i -e 's/autologin/#autologin/g' /srv/eggs/littlebird/etc/lxdm/lxdm.conf
+		sed -i -e 's/session/#session/g' /srv/eggs/littlebird/etc/lxdm/lxdm.conf
+	fi
+
+	# Creazione /etc/hostname
+	echo "$CLIENT_HOSTNAME" > /srv/eggs/littlebird/etc/hostname
+
+	# Configuro resolv.conf
+	echo "### Creazione resolv.conf  ###"
+	echo "# Generated by eggs " > /srv/eggs/littlebird/etc/resolv.conf
+	echo "search localdomain.dom" >> /srv/eggs/littlebird/etc/resolv.conf
+	echo "nameserver $CLUSTER_DNS" >> /srv/eggs/littlebird/etc/resolv.conf
+
+	# Configuro interfaces
+	echo "### Creazione interfaccia di rete  ###"
+	echo "# Generated by eggs " > /srv/eggs/littlebird/etc/network/interfaces
+	echo "auto lo" >> /srv/eggs/littlebird/etc/network/interfaces
+	echo "iface lo inet loopback" >> /srv/eggs/littlebird/etc/network/interfaces
+	echo "iface eth0 inet manual" >> /srv/eggs/littlebird/etc/network/interfaces
+
+	#Creazione di /etc/hosts
+	echo "# Generated by eggs " >/srv/eggs/littlebird/etc/hosts
+	echo "127.0.0.1 localhost.localdomain localhost $CLIENT_HOSTNAME" >>/srv/eggs/littlebird/etc/hosts
+	echo "$IPADDRESS $CLIENT_HOSTNAME.$CLIENTDOMAIN $CLIENT_HOSTNAME " >>/srv/eggs/littlebird/etc/hosts
+	echo "" >>/srv/eggs/littlebird/etc/hosts
+	echo "# The following lines are desirable for IPv6 capable hosts" >>/srv/eggs/littlebird/etc/hosts
+	echo "" >>/srv/eggs/littlebird/etc/hosts
+	echo "::1     ip6-localhost ip6-loopback" >>/srv/eggs/littlebird/etc/hosts
+	echo "fe00::0 ip6-localnet" >>/srv/eggs/littlebird/etc/hosts
+	echo "ff00::0 ip6-mcastprefix" >>/srv/eggs/littlebird/etc/hosts
+	echo "ff02::1 ip6-allnodes" >>/srv/eggs/littlebird/etc/hosts
+	echo "ff02::2 ip6-allrouters" >>/srv/eggs/littlebird/etc/hosts
+	echo "ff02::3 ip6-allhosts" >>/srv/eggs/littlebird/etc/hosts
+	
+
+	# http://www.freedesktop.org/wiki/Software/xdg-user-dirs/
+	test -f ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs && source ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs
+	PATH_TO_SCRIVANIA= ${XDG_DESKTOP_DIR:-$HOME/Desktop}
+	PATH_TO_DOWNLOAD= ${XDG_DOWNLOAD_DIR:-$HOME}
+
+	#
+	# Parte link
+	#
+	# Rimuove eggs e mette clamav sul little-bird
+	rm /srv/eggs/littlebird/etc/skel/Desktop/eggs.desktop
+	cp /usr/share/applications/clamtk.desktop /srv/eggs/littlebird/etc/skel/Desktop/
+
+	# Creazione link desktop su skel e su $CLIENT_USERNAME
+	echo "[Desktop Entry]" > /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Encoding=UTF-8" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Name=images" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "GenericName=Immagini di clonezilla" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Comment=Contiene le immagini di disco clonate" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	#echo "Exec=pcmanfm sftp://$BOOTSERVER_ADDRESS/home/samba/shares/images" >> /srv/eggs/littlebird/etc/skel/Desktop/images.desktop
+	echo "Exec=gksudo pcmanfm /home/partimag" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Icon=/usr/share/icons/Humanity/places/48/folder-remote-ssh.svg" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Terminal=false" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Type=Application" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Categories=System;Settings;" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "StartupNotify=true" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	chmod +x /srv/eggs/littlebird/etc/skel/images.desktop
+
+	cp /srv/eggs/littlebird/etc/skel/images.desktop /srv/eggs/littlebird/$PATH_TO_SCRIVANIA
+	chown $CLIENT_USERNAME:$CLIENT_USERNAME /srv/eggs/littlebird/$PATH_TO_SCRIVANIA/images.desktop
+
+	echo "[Desktop Entry]" > /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Encoding=UTF-8" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Name=temp" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "GenericName=Condivisione di appoggio temporaneo" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Comment=Contiene le immagini di disco clonate" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	#echo "Exec=pcmanfm sftp://$BOOTSERVER_ADDRESS/home/samba/shares/images" >> /srv/eggs/littlebird/etc/skel/Desktop/temp.desktop
+	echo "Exec=pcmanfm sftp://$SSH_IP/tmp" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Icon=/usr/share/icons/Humanity/places/48/folder-remote-ssh.svg" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Terminal=false" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Type=Application" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Categories=System;Settings;" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "StartupNotify=true" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	chmod +x /srv/eggs/littlebird/etc/skel/temp.desktop
+
+	cp /srv/eggs/littlebird/etc/skel/temp.desktop /srv/eggs/littlebird/$PATH_TO_SCRIVANIA
+	chown $CLIENT_USERNAME:$CLIENT_USERNAME /srv/eggs/littlebird/$PATH_TO_SCRIVANIA/temp.desktop
+
+
+	progressBarKill
+
+	# Creazione di connect_to_hell
+	cat > /srv/eggs/littlebird/usr/local/bin/connect_to_hell <<FOO
+sshfs $SSH_USER@$SSH_IP:$SSH_PATH /home/partimag/
+FOO
+	chmod 755 /srv/eggs/littlebird/usr/local/bin/connect_to_hell
+
+	# Creazione di tempinstallerscript
+	progressBar "Fedare\n\nCreazione di tempinstallerscript\n" &
+	cat > /srv/eggs/littlebird/bin/tempass <<FOO
+$SSH_PASSWORD\n
+FOO
+
+
+	
+	cat > /srv/eggs/littlebird/bin/tempinstallerscript <<FOO
+#!/bin/bash
+# Questo script è stato generato da eggs
+# Ottiene la lista degli utenti e li cancella ad esclusione di nobody.
+USERS=\$(getent passwd | tr ":" " " | awk "\\\$3 >= \$(grep UID_MIN /etc/login.defs | cut -d " " -f 2) { print \\\$1 }"|sort)
+for name in \$USERS; do
+	if [ \$name != "nobody" ]
+	then
+		userdel -f -r \$name
+	fi
+done
+# inserisce $CLIENT_USERNAME in //etc//sudoers
+sed -i '/$CLIENT_USERNAME/d' /etc/sudoers
+groupadd -g 1000 $CLIENT_USERNAME
+useradd -u 1000 -g 1000 -c "$CLIENT_USERFULLNAME,,," -G $DEFAULTGROUPS -s /bin/bash -m $CLIENT_USERNAME
+echo -e "$CLIENT_PASSWORD\n$CLIENT_PASSWORD\n" | passwd $CLIENT_USERNAME
+# read -p "A volte, qui occorre un controllo..."
+adduser $CLIENT_USERNAME adm
+adduser $CLIENT_USERNAME cdrom
+adduser $CLIENT_USERNAME sudo
+adduser $CLIENT_USERNAME dip
+adduser $CLIENT_USERNAME plugdev
+adduser $CLIENT_USERNAME lpadmin
+adduser $CLIENT_USERNAME sambashare
+dpkg-divert --remove --rename --quiet /usr/lib/update-notifier/apt-check
+dpkg-divert --remove --rename --quiet /usr/sbin/update-initramfs
+dpkg-divert --remove --rename --quiet /usr/sbin/anacron
+sed 's/MODULES=most/MODULES=netboot/g' /etc/initramfs-tools/initramfs.conf > /tmp/a && mv /tmp/a /etc/initramfs-tools/initramfs.conf
+sed 's/BOOT=local/BOOT=nfs/g' /etc/initramfs-tools/initramfs.conf > /tmp/a && mv /tmp/a /etc/initramfs-tools/initramfs.conf
+#update-initramfs -t -c -k $(/bin/uname -r)
+mkinitramfs -o /tmp/initrd.img-$KERNEL
+shadowconfig on
+rm /root/.ssh -f -r
+ssh-keygen -f /root/.ssh/id_rsa -P little-bird
+sshpass -p "$SSH_PASSWORD" ssh-copy-id -i /root/.ssh/id_rsa $SSH_USER@$SSH_IP
+#read -p "Adesso puoi avviare un qualsiasi pc dalla rete via pxe con questa distribuzione. Premi un tasto per continuare..."
+#apt-get update -y
+#apt-get install clonezilla drbl -y
+FOO
+
+
+	cp /srv/eggs/littlebird/bin/tempinstallerscript /srv/eggs
+
+
+	progressBarKill
+	
+	progressBar "Fedare\n\nAvvio di tempinstallerscript\n" &
+	#
+	#Preparazione dell'ambiente chroot per i passi di post installazione...
+	#
+	mount -o bind /proc /srv/eggs/littlebird/proc
+	mount -o bind /dev /srv/eggs/littlebird/dev
+	mount -o bind /sys /srv/eggs/littlebird/sys
+
+	chmod 755 /srv/eggs/littlebird/bin/tempinstallerscript
+	chroot /srv/eggs/littlebird bin/tempinstallerscript
+	#rm /srv/eggs/littlebird/bin/tempinstallerscript
+	rm /srv/eggs/littlebird/bin/tempass
+
+	sleep 1
+	umount /srv/eggs/littlebird/proc
+	sleep 1
+	umount /srv/eggs/littlebird/dev
+	sleep 1
+	umount /srv/eggs/littlebird/sys
+	sleep 1
+
+	progressBarKill
+
+	# Configurazione pxelinux.cfg
+	progressBar "Fedare\n\nCreazione di pxelinux.cfg... " &
+	PXELINUX_CFG=/var/www/html/pxelinux.cfg
+	PXELINUX_DEFAULT=$PXELINUX_CFG/default
+	
+	mkdir -p /var/www/html/pxelinux.cfg
+	
+	echo "# Generated by eggs " > $PXELINUX_DEFAULT
+	echo "DEFAULT vesamenu.c32" >> $PXELINUX_DEFAULT
+	echo "TIMEOUT 600" >> $PXELINUX_DEFAULT
+	echo "ONTIMEOUT BootLocal" >> $PXELINUX_DEFAULT
+	echo "PROMPT 0" >> $PXELINUX_DEFAULT
+	echo "KBDMAP it.kbd" >> $PXELINUX_DEFAULT
+	echo "DISPLAY display.txt" >> $PXELINUX_DEFAULT
+	echo "SAY Uso la tastiera e locale per italiano." >> $PXELINUX_DEFAULT
+	echo "MENU TITLE Giant-Turle" >> $PXELINUX_DEFAULT
+	echo "MENU BACKGROUND wallpaper.png" >> $PXELINUX_DEFAULT
+	echo "" $PXELINUX_DEFAULT
+	echo "LABEL little-bird" >> $PXELINUX_DEFAULT
+	echo "MENU LABEL little-bird" >> $PXELINUX_DEFAULT
+	echo "  KERNEL little-bird/vmlinuz-$KERNEL" >>  $PXELINUX_DEFAULT
+	echo "  APPEND root=/dev/nfs initrd=little-bird/initrd.img-$KERNEL nfsroot=$BOOTSERVER_ADDRESS:/srv/eggs/littlebird  ip=dhcp rw" >>  $PXELINUX_DEFAULT
+	echo "	IPAPPEND 3" >> $PXELINUX_DEFAULT
+	echo "" >> $PXELINUX_DEFAULT
+	echo "LABEL ========================================================================" >> $PXELINUX_DEFAULT
+	echo "LABEL Avvio da immagini ISO con memdisk - Selezionare l'immagine desiderata" >> $PXELINUX_DEFAULT
+	echo "LABEL ========================================================================" >> $PXELINUX_DEFAULT
+	echo "LABEL WinXP over HTTP" >> $PXELINUX_DEFAULT
+	echo "	MENU LABEL WinXP over HTTP" >> $PXELINUX_DEFAULT
+	echo "		LINUX /memdisk" >> $PXELINUX_DEFAULT
+	echo "		INITRD /iso/WinXP.iso" >> $PXELINUX_DEFAULT
+	echo "		APPEND iso" >> $PXELINUX_DEFAULT
+	echo "" >> $PXELINUX_DEFAULT
+	echo "LABEL ------------------------------------------------------------------------" >> $PXELINUX_DEFAULT
+	echo "LABEL linuxmint-17-cinnamon-dvd-32bit-rc" >> $PXELINUX_DEFAULT
+	echo "	MENU LABEL linuxmint-17-cinnamon-dvd-32bit-rc" >> $PXELINUX_DEFAULT
+	echo "		LINUX /memdisk" >> $PXELINUX_DEFAULT
+	echo "		INITRD /iso/linuxmint-17-cinnamon-dvd-32bit-rc" >> $PXELINUX_DEFAULT
+	echo "		APPEND iso" >> $PXELINUX_DEFAULT
+	echo "" >> $PXELINUX_DEFAULT
+	echo "LABEL ------------------------------------------------------------------------" >> $PXELINUX_DEFAULT
+	echo "LABEL Lin-XP-GT-20140519_1711.iso" >> $PXELINUX_DEFAULT
+	echo "MENU LABEL Lin-XP-GT-20140519_1711.iso" >> $PXELINUX_DEFAULT
+	echo "		LINUX /memdisk" >> $PXELINUX_DEFAULT
+	echo "		INITRD /iso/Lin-XP-GT-20140519_1711.iso" >> $PXELINUX_DEFAULT
+	echo "		APPEND iso" >> $PXELINUX_DEFAULT
+	echo "LABEL ========================================================================" >> $PXELINUX_DEFAULT
+	echo "LABEL Boot locale" >> $PXELINUX_DEFAULT
+	echo "	localboot 0" >> $PXELINUX_DEFAULT
+	echo "	TEXT HELP" >> $PXELINUX_DEFAULT
+	echo "	Esegue il boot dal disco locale" >> $PXELINUX_DEFAULT
+	echo "	ENDTEXT" >> $PXELINUX_DEFAULT
+	echo "" >> $PXELINUX_DEFAULT
+	echo "include common.cfg" >> $PXELINUX_DEFAULT
+	
+	ln /usr/lib/PXELINUX/lpxelinux.0 /var/www/html/lpxelinux.0
+	ln /usr/lib/syslinux/modules/bios/vesamenu.c32 /var/www/html/vesamenu.c32
+	ln /usr/lib/syslinux/modules/bios/ldlinux.c32 /var/www/html/ldlinux.c32
+	ln /usr/lib/syslinux/modules/bios/libcom32.c32 /var/www/html/libcom32.c32
+	ln /usr/lib/syslinux/modules/bios/libutil.c32 /var/www/html/libutil.c32
+	ln /usr/lib/syslinux/memdisk /var/www/html/memdisk
+	
+	progressBarKill
+
+
+	# Copia di initrd e vmlinuz...
+	progressBar "Fedare\n\nCopia di initrd e vmlinuz per i pulcini... " &
+	echo "#### Copia initrd e vmlinuz ####"
+	mkdir /var/www/html/little-bird
+	mv /srv/eggs/littlebird/tmp/initrd.img-$KERNEL  /var/www/html/little-bird
+	cp /boot/vmlinuz-$KERNEL  /var/www/html/little-bird
+	chmod -R 777  /var/www/html
+	progressBarKill
+
+}
+
+
+###
+# bootServerCreate
+################################################################################################
+bootServerCreate()
+{
+	progressBar "Covare\n\nCostruzione apparato incubatore per l\'uovo..." &
+
+	echo "##################################################################################"
+	echo "### Costruzione dell'incubator ###"
+	echo "##################################################################################"
+
+	#
+	# Parte server
+	#
+	
+	# Configuro nfs
+	echo "Covare\n\nConfigurazione nfs"
+	echo "# Generated by Eggs " >/etc/exports
+	echo "#" >>/etc/exports
+	echo "/srv/eggs $CLUSTER_NET/$CLUSTER_NETMASK(rw,no_root_squash,async,no_subtree_check)" >> /etc/exports
+	echo "### Attenzione NON lasciare spazi tra le opzioni ###" >> /etc/exports
+
+	# Configuro dnsmasq.conf
+	echo "Covare\n\nConfigurazione dnsmasq"
+	echo "# Generated by Eggs " >/etc/dnsmasq.conf
+	echo "# Disabilito dns" >>/etc/dnsmasq.conf
+	echo "# port=0" >>/etc/dnsmasq.conf
+	echo "# Abilito tftp" >>/etc/dnsmasq.conf
+	echo "enable-tftp" >>/etc/dnsmasq.conf
+	echo "#Definisco la root per il servizio" >>/etc/dnsmasq.conf
+	echo "tftp-root=/var/www/html" >>/etc/dnsmasq.conf
+	echo "#Definisco il range proxed" >>/etc/dnsmasq.conf
+	echo "dhcp-range=$CLUSTER_NET, proxy , $CLUSTER_NETMASK" >>/etc/dnsmasq.conf
+	echo "pxe-prompt = Eggs and penguins, 0" >>/etc/dnsmasq.conf
+	echo "# IF dhcp-match=set:ipxe,175 THEN" >>/etc/dnsmasq.conf
+	echo "	dhcp-match=set:ipxe,175 # iPXE sends a 175 option." >>/etc/dnsmasq.conf
+	echo "		dhcp-boot=tag:!ipxe,undionly.kpxe" >>/etc/dnsmasq.conf
+	echo "#ELSE" >>/etc/dnsmasq.conf
+	echo "		dhcp-boot=http://$BOOTSERVER_ADDRESS/lpxelinux.0" >>/etc/dnsmasq.conf
+	echo "# ENDIF" >>/etc/dnsmasq.conf
+
+	# copio il wallpaper e ipxe in /var/www/html
+	cp /opt/eggs/www/html/undionly.kpxe /var/www/html 
+	cp /opt/eggs/www/html/wallpaper.png /var/www/html
+
+	# Punto di mounting per Clonezilla
+	mkdir /srv/eggs/littlebird/home/partimag
+
+	# Cambio wallpaper 
+	cp /opt/eggs/wallpapers/* /$XDG_DATA_DIRS/wallpapers
+	#sed 's/galapagos-little-bird.jpg/galapagos-giant-turtle.jpg' /etc/skel/.config/pcmanfm/lubuntu/pcmanfm.conf
+	#sed 's/galapagos-little-bird.jpg/galapagos-giant-turtle.jpg' /home/artisan/.config/pcmanfm/lubuntu/pcmanfm.conf
+	progressBarKill
+}
+
+
+###
+# Viene lanciato il pulcino
+#################################################################################################
+bootServerStart()
+{
+	#Avvio servizi
+	(
+
+		echo "30" ; sleep 1
+		echo "# Attivazione della condivisione nfs" ; sleep 1
+		service portmap stop
+		/etc/init.d/nfs-kernel-server stop
+		service portmap start
+		/etc/init.d/nfs-kernel-server start
+		exportfs -rv
+
+		echo "60"; sleep 1
+		echo "# Attivazione del servizio tftp"; sleep 1
+		/etc/init.d/dnsmasq restart
+
+		echo "100"; sleep 1
+		echo "# Tutti i servizi sono attivati"; sleep 1
+	) |
+	yad --progress \
+		--window-icon=/usr/share/icons/artisan-lab/artisan-lab.png \
+		--image=/usr/share/icons/artisan-lab/artisan-lab-eggs.png \
+		--title="Penguin's Eggs" \
+		--text="Avvio della schiusa... Pio, pio, pio..." \
+		--percentage=0
+
+	#	read -p "Adesso puoi avviare un qualsiasi pc dalla rete via pxe con questa distribuzione. Premi un tasto per continuare..."
+}
+
+
+###
+# Vengono stoppati i servizi ai pulcini
+#################################################################################################
+bootServerStop()
+{
+	#Fermo i servizi
+	(
+		echo "30" ; sleep 1
+		echo "# Disattivazione dalla condivisione nfs" ; sleep 1
+		service portmap stop
+		/etc/init.d/nfs-kernel-server stop
+		service portmap stop
+
+		echo "60"; sleep 1
+		echo "# Disattivazione  del servizio tftp"; sleep 1
+		/etc/init.d/dnsmasq stop
+
+		echo "100"; sleep 1
+		echo "# Tutti i servizi sono stati disattivati"; sleep 1
+	) |
+	yad --progress \
+		--window-icon=/usr/share/icons/artisan-lab/artisan-lab.png \
+		--image=/usr/share/icons/artisan-lab/artisan-lab-eggs.png \
+		--title="Penguin's Eggs" \
+		--text="Stop..." \
+		--percentage=0
+
+	#	read -p "Adesso puoi avviare un qualsiasi pc dalla rete via pxe con questa distribuzione. Premi un tasto per continuare..."
+}
+
+
+##
+#
+###########################################################################################
+mainMenu()
+{
+
+# Ciclo menu
+test=""
+while [ test="" ]
+do
+
+	chosen=$(yad \
+				--window-icon=/usr/share/icons/artisan-lab/artisan-lab.png \
+				--image=/usr/share/icons/artisan-lab/artisan-lab-eggs.png \
+				--title="Penguin's Eggs" \
+				--center \
+				--width=400 \
+				--height=300 \
+				--always-print-result \
+				--dialog-sep \
+				--text="Curiamo il sistema come fossimo una... chioccia!" \
+				--list \
+					--column=Scelta \
+					--column=Informazioni \
+					"Riproduzione"  "Fecondazione, deposizione e cova..." \
+					"Aborto"  "Ed il sistema ritorna... gallina!" \
+					"Ferma"  "Ferma il pulcino"	\
+					"Riavvia"  "Avvio del pulcino"\
+					"Esce"  "Esco dalla cova") 
+
+	chosen=$(echo $chosen | cut -d "|" -f 1)
+
+	case "$chosen" in
+	"Riproduzione")
+		yesNoBox "\
+ATTENZIONE!
+
+Per una riproduzione \"responsabile\" occorre impegnarsi a:
+
+- fecondare: basta solo impostare al nascituro il nome utente, la 
+  password ed il nome di battesimo;
+
+- fedare: la produzione dell'uovo richiede tempo ed energia. Unitamente
+  alle informazioni precedenti, si copia tutto il sistema in sé stesso 
+  per la generazione dell\'uovo fecondato;
+
+- covare: occorre installare un apparato incubatore, costituito dai 
+  servizi proxy-dhcp, tftp, nfs e samba e tenerlo attivo per la generazione
+  e la fase di crescita dei pulcini generati.
+
+Siete sicuri di voler continuare?"
+
+		if [ $? = 0 ]
+		then
+			eggNfsPrepare
+			bootServerInstall
+			bootServerCreate
+			bootServerStart
+			messageKind "
+Complimenti, siete pronti ad allevare i vostri pulcini!
+Per accedere ai pulcini, basta effettuare il boot dalla rete.
+(Normalmente tasto F12 o F8 oppure ESC)
+
+- user: $CLIENT_USERNAME
+- pass: $CLIENT_PASSWORD
+
+Siate dei genitori responsabili e non lasciate che i vostri pulcini si
+becchino, o vengano beccati, dai cuculi o dai polli della rete!"
+		fi
+		;;
+
+	"Aborto")
+		yesNoBox "
+ATTENZIONE!
+
+Durante questo processo verrà distrutto l\'uovo e saranno 
+rimosse tutte le opzioni di bootserver del sistema.
+
+Siete sicuri di voler continuare?"
+		if [ $? = 0 ]
+		then
+			bootServerRemove
+		fi
+		;;
+		
+	"Riavvia")
+		yesNoBox "
+INFORMAZIONI
+
+Il servizio di boot server sarà fermato e riavvivato. I pulcini eventualmente
+attivi ne potrebbero soffrire parecchio.
+
+Siete sicuri di voler continuare?"
+		if [ $? = 0 ]
+		then
+			bootServerStart
+		fi
+		;;
+		
+	"Ferma")
+		yesNoBox "
+INFORMAZIONI
+
+Questa procedura interromperà il servizio di boot server.
+Non sarà possibile far nascere nuovi pulcini, sino a quando il servizio 
+non sarà riavviato.
+
+Siete sicuri di voler continuare?"
+		if [ $? = 0 ]
+		then
+			bootServerStop
+		fi
+		;;
+
+	"Esce")
+		exit 0
+		;;
+
+	esac
+done
+
+}
+
+
+##########################################################################################################################
+# RILEVAZIONE DELLE VARIABILI PRINCIPALI
+##########################################################################################################################
+declare BOOTSERVER_ADDRESS=$(ifconfig eth0 | grep inet | grep -v inet6 | cut -d ":" -f 2 | cut -d " " -f 1)
+declare CLUSTER_BROADCAST=$(ifconfig eth0 | grep inet | grep -v inet6 | cut -d ":" -f 3 | cut -d " " -f 1)
+declare CLUSTER_NET1=$(ifconfig eth0 | grep inet | grep -v inet6 | cut -d ":" -f 2 | cut -d " " -f 1| cut -d "." -f1 )
+declare CLUSTER_NET2=$(ifconfig eth0 | grep inet | grep -v inet6 | cut -d ":" -f 2 | cut -d " " -f 1| cut -d "." -f2 )
+declare CLUSTER_NET3=$(ifconfig eth0 | grep inet | grep -v inet6 | cut -d ":" -f 2 | cut -d " " -f 1| cut -d "." -f3 )
+declare CLUSTER_NET="$CLUSTER_NET1.$CLUSTER_NET2.$CLUSTER_NET3.0"
+declare CLUSTER_NETMASK=$(ifconfig eth0 | grep inet | grep -v inet6 | cut -d ":" -f 4 | cut -d " " -f 1)
+
+declare DEFAULTGROUPS="audio,cdrom,dialout,floppy,video,plugdev"
+
+declare CLUSTER_DNS=$(nm-tool | grep DNS | cut -d ":" -f2 |sed 's/^ *//g')
+declare CLUSTER_GATEWAY=$(nm-tool | grep Gateway | cut -d ":" -f2 |sed 's/^ *//g')
+declare CLIENT_USERNAME=$(users)
+declare KERNEL=$(uname -r)
+
+
+########################################################################
+# main
+########################################################################
+
+yesNoBox "
+Penguin\'s Eggs rende il tuo sistema un boot server... di se stesso!
+
+Ecco come accade la trasformazione:
+- per prima cosa copia il tuo sistema in \/srv\/eggs\/littlebird, 
+  quindi lo configura, per  essere utilizzato attraverso un boot server;
+- a questo punto scarica i pacchetti necessari per configurare la tua 
+  macchina come un boot server dell\'uovo precedentemente deposto!
+
+Richiede un po\' di tempo ed abbastanza  spazio sul disco, ma può essere
+utilizzato per molti scopi, prima di tutto accedere a pc non funzionanti
+per il backup  ed il ripristino del sistema operativo, attraverso l\'uso 
+di Clonezilla.
+Immagina solo l\'utilità di poter accedere ad ogni computer semplicemente 
+effettuando il  boot dalla rete, salvare \"al volo\" i dati dell\'utente e
+ripristinarli sulla stessa dopo aver effettuato il restore delle immagini 
+Clonezilla precedentemente create.
+
+Il sistema verrà configurato con i seguenti parametri:
+- Rete servita: $CLUSTER_NET/$CLUSTER_NETMASK
+- Boot server
+  - Indirizzo: ip $BOOTSERVER_ADDRESS netmask $CLUSTER_NETMASK gw $CLUSTER_GATEWAY
+  - Name server DNS: $CLUSTER_DNS
+
+I \"pulcini\" della rete servita, avranno un indirizzo dinamico gestito dal servizio DHCP.
+
+IMPORTANTE!
+Penguin\'s Eggs è configurato per NON interferire con i servizi di rete
+preesistenti, richiede anzi, la presenza di un servizio DHCP attivo e funzionante.
+In caso di dubbio, consultare comunque, l'amministratore di rete.
+
+Se non stai facendo solo un esperimento, ti suggeriamo - prima di iniziare -
+di impostare per questa macchina un indirizzo IP statico.
+
+Vuoi continuare?
+"
+if [ $? = 0 ]
+then
+	mainMenu
+else
+	exit 0
+fi

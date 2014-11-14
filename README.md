@@ -36,11 +36,17 @@ Una nota sui nomi
 =================
 La macchina che diventa boot server viene dall'autore chiamata giantturtle
 mentre le macchine che vengono avviate in boot remoto vengono individuate 
-dal nome littlebird. Come fa una tartaruga gigante a riprodursi in tanti
+dal nome littlebird. 
+
+Come fa una tartaruga gigante a riprodursi in tanti
 piccoli uccellini? 
 
-![giantturtle]https://github.com/pieroproietti/eggs-utopic/blob/master/opt/eggs/wallpapers/galapagos-giant-turtle.jpg?raw
+In /opt/eggs/wallpaper trovere degli sfondi adeguati per evitare qualsiasi
+confusione:
 
+![giantturtle](https://github.com/pieroproietti/eggs-utopic/blob/master/opt/eggs/wallpapers/galapagos-giant-turtle.jpg?raw)
+
+![littlebird](
 Serve aiuto?
 ===========
 Per ulteriori informazioni consultate il wiki: http://piojoris15.com

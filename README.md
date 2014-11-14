@@ -17,7 +17,7 @@ il restore delle vostre immagini di sistema.
 Istruzioni
 ==========
 Scaricate ed installate una versione di Ubuntu, Kubuntu o Lubuntu
-sulla macchina che sarà il vostro boot server. 
+14.10 sulla macchina che sarà il vostro boot server. 
 
 Una volta completata l'installazione, procedete ad abilitare la 
 repository ppa:webupd8team/y-ppa-manager, necessaria per yad 

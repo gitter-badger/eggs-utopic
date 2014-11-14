@@ -25,13 +25,6 @@ procedendo come segue:
 
 YAD (Yet Another Dialog) è un fork di zenity con molte migliorie.
 
-Suggerimenti
-============
-Si consiglia di installare sui littlebird il pacchetto clonezilla che vi 
-permetterà di clonare al volo le vostre macchine. In una unica soluzione
-avrete la possibilità di salvare i dati utente, effettuare il restore
-del disco e rimettere i dati utente al loro posto.
-
 Una nota sui nomi
 =================
 La macchina che diventa boot server viene dall'autore chiamata giantturtle
@@ -49,6 +42,21 @@ Giant Turtle - Il boot server
 
 Little bird - Il piccolo uccellino che viaggia a scrocco della tartaruga!
 ![littlebird](https://github.com/pieroproietti/eggs-utopic/blob/master/opt/eggs/wallpapers/galapagos-little-bird.jpg?raw)
+
+Suggerimenti
+============
+Si consiglia di installare sui littlebird il pacchetto clonezilla che vi 
+permetterà di clonare al volo le vostre macchine. In una unica soluzione
+avrete la possibilità di salvare i dati utente, effettuare il restore
+del disco e rimettere i dati utente al loro posto.
+
+Per installare clonezilla sul littlebird, semplicemente avviate una macchina
+in remoto ed aprite una finestra di terminale:
+ apt-get update
+ apt-get install clonezilla
+ 
+A questo punto, potete iniziare a riparare le finestre rotte!
+
 Serve aiuto?
 ===========
 Per ulteriori informazioni consultate il wiki: http://piojoris15.com

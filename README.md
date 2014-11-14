@@ -11,12 +11,12 @@ poco - nella sistemazione delle finestre!
 Tutto quello che serve per trasformare il tuo ubuntu/lubuntu/kubuntu 
 14.10 in un boot server di se stesso!
 
-Con giantturtle trasformerete la vostra macchina in un boot server e 
+Con eggs trasformerete la vostra macchina in un boot server e 
 potrete avviare qualsiasi computer in rete locale con le vostre 
 impostazioni per la manutenzione, il recupero dati, la clonazione ed
 il restore delle vostre immagini di sistema.
 
-Per il funzionamento di giantturtle è necessaria l'installazione del
+Per il funzionamento di eggs-utopic è necessaria l'installazione del
 pacchetto yad, occorre quindi abilitare la repository ppa:webupd8team/y-ppa-manager
 procedendo come segue:
 - sudo add-apt-repository ppa:webupd8team/y-ppa-manager
@@ -32,6 +32,11 @@ permetterà di clonare al volo le vostre macchine. In una unica soluzione
 avrete la possibilità di salvare i dati utente, effettuare il restore
 del disco e rimettere i dati utente al loro posto.
 
+Una nota sui nomi
+=================
+La macchina che diventa boot server viene dall'autore chiamata ''giantturtle''
+mentre le macchine che vengono avviate in boot remoto vengono individuate 
+dal nome ''littlebird''. 
 
 Serve aiuto?
 ===========

@@ -34,9 +34,12 @@ del disco e rimettere i dati utente al loro posto.
 
 Una nota sui nomi
 =================
-La macchina che diventa boot server viene dall'autore chiamata ''giantturtle''
+La macchina che diventa boot server viene dall'autore chiamata giantturtle
 mentre le macchine che vengono avviate in boot remoto vengono individuate 
-dal nome ''littlebird''. 
+dal nome littlebird. Come fa una tartaruga gigante a riprodursi in tanti
+piccoli uccellini? 
+
+![giantturtle]https://github.com/pieroproietti/eggs-utopic/blob/master/opt/eggs/wallpapers/galapagos-giant-turtle.jpg?raw
 
 Serve aiuto?
 ===========

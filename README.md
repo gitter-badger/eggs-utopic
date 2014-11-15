@@ -27,10 +27,10 @@ procedendo come segue:
 - sudo apt-get update
 - sudo apt-get install yad
 
-scaricate il pacchetto Debian [eggs-utopic_X.X-X-X_all.deb](http://www.piojoris15.com/2014/11/cosa-bolle-in-pentola/)
+scaricate il pacchetto Debian [eggs-utopic_X.X.X-X_all.deb](http://www.piojoris15.com/2014/11/cosa-bolle-in-pentola/)
 dal sito http://www.piojoris15.com
 
-- sudo dpkg -i eggs-utopic_X.X-X-X_all.deb
+- sudo dpkg -i eggs-utopic_X.X.X-X_all.deb
 
 correggete le dipendenze:
 - sudo apt-get install -f

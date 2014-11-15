@@ -20,22 +20,22 @@ Scaricate ed installate una versione di Ubuntu, Kubuntu o Lubuntu
 14.10 sulla macchina che sarà il vostro boot server. 
 
 Una volta completata l'installazione, procedete ad abilitare la 
-repository ppa:webupd8team/y-ppa-manager, necessaria per yad 
-YAD (Yet Another Dialog) è un fork di zenity con molte migliorie -
+repository ppa:webupd8team/y-ppa-manager, necessaria per YAD
+(Yet Another Dialog) è un fork di zenity con molte migliorie,
 procedendo come segue:
 - sudo add-apt-repository ppa:webupd8team/y-ppa-manager
 - sudo apt-get update
 - sudo apt-get install yad
 
-Scaricate eggs-utopic.deb
+Scaricate [eggs-utopic_X.X-X-X_all.deb](http://www.piojoris15.com/2014/11/cosa-bolle-in-pentola/)
 
-sudo dpkg -i eggs-utopic
+- sudo dpkg -i eggs-utopic_X.X-X-X_all.deb
 
 correggete le dipendenze:
-sudo apt-get install -f
+- sudo apt-get install -f
 
 avviate eggs
-sudo /opt/eggs/eggs
+- sudo /opt/eggs/eggs
 
 procedete secondo le istruzioni.
 

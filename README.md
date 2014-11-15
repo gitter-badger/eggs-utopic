@@ -27,7 +27,8 @@ procedendo come segue:
 - sudo apt-get update
 - sudo apt-get install yad
 
-Scaricate [eggs-utopic_X.X-X-X_all.deb](http://www.piojoris15.com/2014/11/cosa-bolle-in-pentola/)
+scaricate il pacchetto Debian [eggs-utopic_X.X-X-X_all.deb](http://www.piojoris15.com/2014/11/cosa-bolle-in-pentola/)
+dal sito http://www.piojoris15.com
 
 - sudo dpkg -i eggs-utopic_X.X-X-X_all.deb
 
@@ -46,9 +47,10 @@ mentre le macchine che vengono avviate in boot remoto vengono individuate
 dal nome littlebird. 
 
 Come fa una tartaruga gigante a riprodursi in tanti piccoli uccellini? 
-Beh, la risproduzione non &egrave; ancora perfetta! Ad ogni modo, la 
+Beh, la risproduzione non &egrave; ancora perfetta! Scherzi a parte, la 
 tartaruga quando inizia il processo di riproduzione è ancora un
-pinguino normale, solo dopo viene aggiornata.
+pinguino normale, riproduce quindi se stesso, &egrave; solo dopo il 
+rilascio dell'uovo che viene aggiornata per la "schiusa" di rete.
 
 In /opt/eggs/wallpaper trovere degli sfondi adeguati per evitare qualsiasi
 confusione:

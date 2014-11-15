@@ -34,10 +34,10 @@ Scaricate [eggs-utopic_X.X-X-X_all.deb](http://www.piojoris15.com/2014/11/cosa-b
 correggete le dipendenze:
 - sudo apt-get install -f
 
-avviate eggs
+avviate eggs:
 - sudo /opt/eggs/eggs
 
-procedete secondo le istruzioni.
+e procedete secondo le istruzioni.
 
 Una nota sui nomi
 =================
@@ -45,8 +45,10 @@ La macchina che diventa boot server viene dall'autore chiamata giantturtle
 mentre le macchine che vengono avviate in boot remoto vengono individuate 
 dal nome littlebird. 
 
-Come fa una tartaruga gigante a riprodursi in tanti
-piccoli uccellini? 
+Come fa una tartaruga gigante a riprodursi in tanti piccoli uccellini? 
+Beh, la risproduzione non &egrave; ancora perfetta! Ad ogni modo, la 
+tartaruga quando inizia il processo di riproduzione è ancora un
+pinguino normale, solo dopo viene aggiornata.
 
 In /opt/eggs/wallpaper trovere degli sfondi adeguati per evitare qualsiasi
 confusione:

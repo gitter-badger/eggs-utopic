@@ -27,7 +27,7 @@ procedendo come segue:
 - sudo apt-get update
 - sudo apt-get install yad
 
-scaricate il pacchetto Debian [eggs-utopic_x.x.x-x_all.deb](http://www.piojoris15.com/2014/11/cosa-bolle-in-pentola/)
+scaricate il pacchetto Debian [eggs-utopic_x.x.x-x_all.deb](http://piojoris15.com/DEBS/eggs-utopic_0.8.0-1_all.deb)
 dal sito http://www.piojoris15.com
 
 - sudo dpkg -i eggs-utopic_x.x.x-x_all.deb

@@ -295,6 +295,9 @@ Prima di riprodursi, un sistema responsabile, si aggiorna..." &
 	echo "ff02::2 ip6-allrouters" >>/srv/eggs/littlebird/etc/hosts
 	echo "ff02::3 ip6-allhosts" >>/srv/eggs/littlebird/etc/hosts
 	
+	#Creazione di /etc/resolvconf/resolv.conf.d/base
+	echo "Creazione di /etc/resolvconf/resolv.conf.d/base"
+	echo "nameserver $CLUSTER_DNS" >>/etc/resolvconf/resolv.conf.d/base
 
 	# http://www.freedesktop.org/wiki/Software/xdg-user-dirs/
 	test -f ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs && source ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs

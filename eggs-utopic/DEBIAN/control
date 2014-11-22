@@ -6,8 +6,8 @@ Depends: yad, perl, ash, ipcalc, sshfs, wakeonlan, syslinux, pxelinux
 Section: admin
 Priority: extra
 Homepage: http://piojoris15.com/
-Description: GiantTurtle installa un boot server ed avvia la distro 
+Description: eggs-utopic installa un boot server ed avvia la distro 
  little-bird o le immagini iso (NON INCLUSE)
  .
- GiantTurtle, creato da Piero Proietti piero.proietti@gmail.com
-              https://github.com/pieroproietti/giantturtle-utopic/
+ eggs-utopic, creato da Piero Proietti piero.proietti@gmail.com
+              https://github.com/pieroproietti/eggs-utopic/

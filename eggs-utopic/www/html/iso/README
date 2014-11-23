@@ -1,0 +1,8 @@
+Inserisci qui le tue immagini iso da avviare, quindi modifica
+il file /var/www/html/pxelinux.cfg/default ed aggiungi le
+seguenti righe con il nome della tua distro
+
+MENU LABEL nome-distro
+	LINUX /memdisk
+	INITRD /iso/nome-immagine-iso
+	APPEND iso

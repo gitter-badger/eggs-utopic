@@ -1,5 +1,5 @@
 Package: eggs-utopic
-Version: 0.8.0-5
+Version: 0.8.0-6
 Architecture: all
 Maintainer: Piero Proietti [piero.proietti@gmail.com]
 Depends: yad, perl, ash, ipcalc, sshfs, wakeonlan, syslinux, pxelinux

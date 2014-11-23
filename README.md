@@ -56,10 +56,10 @@ In /opt/eggs/wallpaper trovere degli sfondi adeguati per evitare qualsiasi
 confusione:
 
 Giant Turtle - Il boot server
-![giantturtle](https://github.com/pieroproietti/eggs-utopic/blob/master/opt/eggs/wallpapers/galapagos-giant-turtle.jpg?raw)
+![giantturtle](https://github.com/pieroproietti/eggs-utopic/blob/master/eggs-utopic/opt/eggs/wallpapers/galapagos-giant-turtle.jpg?raw)
 
 Little bird - Il piccolo uccellino che viaggia a scrocco della tartaruga!
-![littlebird](https://github.com/pieroproietti/eggs-utopic/blob/master/opt/eggs/wallpapers/galapagos-little-bird.jpg?raw)
+![littlebird](https://github.com/pieroproietti/eggs-utopic/blob/master/eggs-utopic/opt/eggs/wallpapers/galapagos-little-bird.jpg?raw)
 
 Suggerimenti
 ============

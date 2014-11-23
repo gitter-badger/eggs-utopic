@@ -70,8 +70,15 @@ del disco e rimettere i dati utente al loro posto.
 
 Per installare clonezilla sul littlebird, semplicemente avviate una macchina
 in remoto ed aprite una finestra di terminale:
+
  apt-get update
- apt-get install clonezilla
+ 
+ apt-get install clonezilla gdisk
+ 
+Attenzione: al momento, 22 novembre 2014 per un problema di allineamento nella
+repository di ubuntu tra il pacchetto clonezilla e partclone, il pacchetto cosi'
+installato NON funziona. Occorre scaricare e compilare partclone-0.2.69-0 che 
+implementa l'opzione partclone -z richiesta da clonezilla.
  
 A questo punto, potete iniziare a riparare le finestre rotte!
 

@@ -27,7 +27,7 @@
 
 
 littlebirdConfigure(){
-	# Riconfigurazione littlebird
+	# Configurazione/Riconfigurazione littlebird
 	# Creazione /etc/hostname
 	echo "$CLIENT_HOSTNAME" > /srv/eggs/littlebird/etc/hostname
 

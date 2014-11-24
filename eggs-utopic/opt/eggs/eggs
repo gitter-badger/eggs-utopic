@@ -91,9 +91,8 @@ messageKind()
 ###########
 
 
-littlebirdConfigure(){
+littleBirdConfigure(){
 	# Configurazione/Riconfigurazione littlebird
-	
 	
 	# Configuro fstab
 	rm -rf /srv/eggs/littlebird/etc/fstab
@@ -150,6 +149,56 @@ littlebirdConfigure(){
 
 }
 
+
+littleBirdCreateLinks(){
+	# http://www.freedesktop.org/wiki/Software/xdg-user-dirs/
+	test -f ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs && source ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs
+	PATH_TO_SCRIVANIA= ${XDG_DESKTOP_DIR:-$HOME/Desktop}
+	PATH_TO_DOWNLOAD= ${XDG_DOWNLOAD_DIR:-$HOME}
+
+	#
+	# Parte link
+	#
+	# Rimuove eggs e mette clamav sul little-bird
+	rm /srv/eggs/littlebird/etc/skel/Desktop/eggs.desktop
+	cp /usr/share/applications/clamtk.desktop /srv/eggs/littlebird/etc/skel/Desktop/
+
+	# Creazione link desktop su skel e su $CLIENT_USERNAME
+	echo "[Desktop Entry]" > /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Encoding=UTF-8" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Name=images" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "GenericName=Immagini di clonezilla" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Comment=Contiene le immagini di disco clonate" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	#echo "Exec=pcmanfm sftp://$BOOTSERVER_ADDRESS/home/samba/shares/images" >> /srv/eggs/littlebird/etc/skel/Desktop/images.desktop
+	echo "Exec=gksudo pcmanfm /home/partimag" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Icon=/usr/share/icons/Humanity/places/48/folder-remote-ssh.svg" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Terminal=false" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Type=Application" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "Categories=System;Settings;" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	echo "StartupNotify=true" >> /srv/eggs/littlebird/etc/skel/images.desktop
+	chmod +x /srv/eggs/littlebird/etc/skel/images.desktop
+
+	cp /srv/eggs/littlebird/etc/skel/images.desktop /srv/eggs/littlebird/$PATH_TO_SCRIVANIA
+	chown $CLIENT_USERNAME:$CLIENT_USERNAME /srv/eggs/littlebird/$PATH_TO_SCRIVANIA/images.desktop
+
+	echo "[Desktop Entry]" > /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Encoding=UTF-8" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Name=temp" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "GenericName=Condivisione di appoggio temporaneo" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Comment=Contiene le immagini di disco clonate" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	#echo "Exec=pcmanfm sftp://$BOOTSERVER_ADDRESS/home/samba/shares/images" >> /srv/eggs/littlebird/etc/skel/Desktop/temp.desktop
+	echo "Exec=pcmanfm sftp://$SSH_IP/tmp" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Icon=/usr/share/icons/Humanity/places/48/folder-remote-ssh.svg" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Terminal=false" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Type=Application" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "Categories=System;Settings;" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	echo "StartupNotify=true" >> /srv/eggs/littlebird/etc/skel/temp.desktop
+	chmod +x /srv/eggs/littlebird/etc/skel/temp.desktop
+
+	cp /srv/eggs/littlebird/etc/skel/temp.desktop /srv/eggs/littlebird/$PATH_TO_SCRIVANIA
+	chown $CLIENT_USERNAME:$CLIENT_USERNAME /srv/eggs/littlebird/$PATH_TO_SCRIVANIA/temp.desktop
+	
+}
 
 
 
@@ -315,63 +364,8 @@ Prima di riprodursi, un sistema responsabile, si aggiorna..." &
 		sed -i -e 's/session/#session/g' /srv/eggs/littlebird/etc/lxdm/lxdm.conf
 	fi
 
-	littlebirdConfigure
-	# -/etc/fstab
-	# -/etc/hostname 
-	# -resolv.conf
-	# -/etc/resolvconf/resolv.conf.d/base
-	# -interfaces
-	# -/etc/hosts
-	# -/usr/local/bin/connect_to_hell
-	
-
-	# http://www.freedesktop.org/wiki/Software/xdg-user-dirs/
-	test -f ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs && source ${XDG_CONFIG_HOME:-~/.config}/user-dirs.dirs
-	PATH_TO_SCRIVANIA= ${XDG_DESKTOP_DIR:-$HOME/Desktop}
-	PATH_TO_DOWNLOAD= ${XDG_DOWNLOAD_DIR:-$HOME}
-
-	#
-	# Parte link
-	#
-	# Rimuove eggs e mette clamav sul little-bird
-	rm /srv/eggs/littlebird/etc/skel/Desktop/eggs.desktop
-	cp /usr/share/applications/clamtk.desktop /srv/eggs/littlebird/etc/skel/Desktop/
-
-	# Creazione link desktop su skel e su $CLIENT_USERNAME
-	echo "[Desktop Entry]" > /srv/eggs/littlebird/etc/skel/images.desktop
-	echo "Encoding=UTF-8" >> /srv/eggs/littlebird/etc/skel/images.desktop
-	echo "Name=images" >> /srv/eggs/littlebird/etc/skel/images.desktop
-	echo "GenericName=Immagini di clonezilla" >> /srv/eggs/littlebird/etc/skel/images.desktop
-	echo "Comment=Contiene le immagini di disco clonate" >> /srv/eggs/littlebird/etc/skel/images.desktop
-	#echo "Exec=pcmanfm sftp://$BOOTSERVER_ADDRESS/home/samba/shares/images" >> /srv/eggs/littlebird/etc/skel/Desktop/images.desktop
-	echo "Exec=gksudo pcmanfm /home/partimag" >> /srv/eggs/littlebird/etc/skel/images.desktop
-	echo "Icon=/usr/share/icons/Humanity/places/48/folder-remote-ssh.svg" >> /srv/eggs/littlebird/etc/skel/images.desktop
-	echo "Terminal=false" >> /srv/eggs/littlebird/etc/skel/images.desktop
-	echo "Type=Application" >> /srv/eggs/littlebird/etc/skel/images.desktop
-	echo "Categories=System;Settings;" >> /srv/eggs/littlebird/etc/skel/images.desktop
-	echo "StartupNotify=true" >> /srv/eggs/littlebird/etc/skel/images.desktop
-	chmod +x /srv/eggs/littlebird/etc/skel/images.desktop
-
-	cp /srv/eggs/littlebird/etc/skel/images.desktop /srv/eggs/littlebird/$PATH_TO_SCRIVANIA
-	chown $CLIENT_USERNAME:$CLIENT_USERNAME /srv/eggs/littlebird/$PATH_TO_SCRIVANIA/images.desktop
-
-	echo "[Desktop Entry]" > /srv/eggs/littlebird/etc/skel/temp.desktop
-	echo "Encoding=UTF-8" >> /srv/eggs/littlebird/etc/skel/temp.desktop
-	echo "Name=temp" >> /srv/eggs/littlebird/etc/skel/temp.desktop
-	echo "GenericName=Condivisione di appoggio temporaneo" >> /srv/eggs/littlebird/etc/skel/temp.desktop
-	echo "Comment=Contiene le immagini di disco clonate" >> /srv/eggs/littlebird/etc/skel/temp.desktop
-	#echo "Exec=pcmanfm sftp://$BOOTSERVER_ADDRESS/home/samba/shares/images" >> /srv/eggs/littlebird/etc/skel/Desktop/temp.desktop
-	echo "Exec=pcmanfm sftp://$SSH_IP/tmp" >> /srv/eggs/littlebird/etc/skel/temp.desktop
-	echo "Icon=/usr/share/icons/Humanity/places/48/folder-remote-ssh.svg" >> /srv/eggs/littlebird/etc/skel/temp.desktop
-	echo "Terminal=false" >> /srv/eggs/littlebird/etc/skel/temp.desktop
-	echo "Type=Application" >> /srv/eggs/littlebird/etc/skel/temp.desktop
-	echo "Categories=System;Settings;" >> /srv/eggs/littlebird/etc/skel/temp.desktop
-	echo "StartupNotify=true" >> /srv/eggs/littlebird/etc/skel/temp.desktop
-	chmod +x /srv/eggs/littlebird/etc/skel/temp.desktop
-
-	cp /srv/eggs/littlebird/etc/skel/temp.desktop /srv/eggs/littlebird/$PATH_TO_SCRIVANIA
-	chown $CLIENT_USERNAME:$CLIENT_USERNAME /srv/eggs/littlebird/$PATH_TO_SCRIVANIA/temp.desktop
-
+	littleBirdConfigure
+	littleBirdCreateLinks
 
 	progressBarKill
 

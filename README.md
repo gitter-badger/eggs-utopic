@@ -1,6 +1,8 @@
 eggs-utopic
 ===========
 
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/pieroproietti/eggs-utopic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 
 ![eggs-utopic](https://github.com/pieroproietti/eggs-utopic/blob/master/eggs-utopic/opt/eggs/eggs.png?raw=true)
  Eggs, un sistema di riproduzione eccellente per pinguini ma che aiuta - non 
